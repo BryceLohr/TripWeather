@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+      html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+    </style>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=API_KEY">
+    </script>
+    <script type="text/javascript">
+      function initialize() {
+        var departureLocation = new google.maps.LatLng(40.639751,-73.778925); // JFK
+        var arrivalLocation = new google.maps.LatLng(37.618972,-122.374889); // SFO
+        var departTime = new Date(2015, 1, 7, 8);
+        var avgSpeed = 300; // miles per hour
+        var reportInterval = 1; // hours
+
+        var weatherReportCoordinates = [
+          departureLocation,
+          new google.maps.LatLng(42.2519,-98.0983), // midpoint
+          arrivalLocation
+        ]
+
+        var mapOptions = {
+          center: new google.maps.LatLng(42.2519,-98.0983),
+          mapTypeId: google.maps.MapTypeId.TERRAIN,
+          zoom: 5
+        };
+        var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+        var departureMarker = new google.maps.Marker({
+            position: departureLocation,
+            map: map,
+            title: "JFK"
+        });
+        var arrivalMarker = new google.maps.Marker({
+            position: arrivalLocation,
+            map: map,
+            title: "SFO"
+        });
+        var flightPath = new google.maps.Polyline({
+          path: weatherReportCoordinates,
+          geodesic: true,
+          strokeColor: '#FF0000',
+          strokeOpacity: 1.0,
+          strokeWeight: 2
+        });
+
+        flightPath.setMap(map);
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+  </head>
+  <body>
+<div id="map-canvas"></div>
+  </body>
+</html>
