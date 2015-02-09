@@ -92,6 +92,10 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 ALLOWED_HOSTS = ['*']
 
 
+BOOTSTRAP3 = {
+    'include_jquery': True
+}
+
 # Local dev environment settings
 try:
     from local_settings import *
