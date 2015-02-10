@@ -1,4 +1,4 @@
-angular.module('TripWeather', ['uiGmapgoogle-maps', 'FlightPlan'])
+angular.module('TripWeather', ['uiGmapgoogle-maps', 'FlightPlan', 'WeatherData'])
 
 .config(function(uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
@@ -7,7 +7,8 @@ angular.module('TripWeather', ['uiGmapgoogle-maps', 'FlightPlan'])
     });
 })
 
-.controller('MapController', ['$scope', 'getWeatherReportCoords', function($scope, getWeatherReportCoords) {
+.controller('MapController', ['$scope', 'getWeatherReportCoords', 'getWeatherAtCoords',
+    function($scope, getWeatherReportCoords, getWeatherAtCoords) {
   var departureLocation = { latitude: 40.639751, longitude: -73.778925 }; // JFK
   var arrivalLocation = { latitude: 37.618972, longitude: -122.374889 }; // SFO
   var departTime = new Date(2015, 1, 7, 8);
@@ -16,6 +17,11 @@ angular.module('TripWeather', ['uiGmapgoogle-maps', 'FlightPlan'])
 
   $scope.weatherReportCoordinates = getWeatherReportCoords(
     departureLocation, arrivalLocation, departTime, avgSpeed, reportInterval);
+
+  $scope.weatherReports = getWeatherAtCoords($scope.weatherReportCoordinates);
+
+  console.log("weatherReportCoordinates: ", $scope.weatherReportCoordinates);
+  console.log("weatherReports: ", $scope.weatherReports);
 
   $scope.mapOptions = {
     center: $scope.weatherReportCoordinates.midpoint,
@@ -62,126 +68,4 @@ angular.module('TripWeather', ['uiGmapgoogle-maps', 'FlightPlan'])
 
   flightPath.setMap(map);
   */
-
-    var weatherData = [
-     {
-         "timestamp": "2015-02-08T16:00:00-05:00",
-         "latitude": 36.096,
-         "longitude": -80.2517,
-         "precip": 0,
-         "precipProb": 0,
-         "sfcPres": 1011.4,
-         "spcHum": 5.2,
-         "temp": 66,
-         "windSpd": 15,
-         "windDir": 220
-     },
-     {
-         "timestamp": "2015-02-08T17:00:00-05:00",
-         "latitude": 36.096,
-         "longitude": -80.2517,
-         "precip": 0,
-         "precipProb": 0,
-         "sfcPres": 1011.4,
-         "spcHum": 5.1,
-         "temp": 64,
-         "windSpd": 14,
-         "windDir": 210
-     },
-     {
-         "timestamp": "2015-02-08T18:00:00-05:00",
-         "latitude": 36.096,
-         "longitude": -80.2517,
-         "precip": 0,
-         "precipProb": 0,
-         "sfcPres": 1011.6,
-         "spcHum": 5.1,
-         "temp": 62,
-         "windSpd": 12,
-         "windDir": 210
-     },
-     {
-         "timestamp": "2015-02-08T19:00:00-05:00",
-         "latitude": 36.096,
-         "longitude": -80.2517,
-         "precip": 0,
-         "precipProb": 0,
-         "sfcPres": 1011.8,
-         "spcHum": 5.1,
-         "temp": 58,
-         "windSpd": 10,
-         "windDir": 210
-     },
-     {
-         "timestamp": "2015-02-08T20:00:00-05:00",
-         "latitude": 36.096,
-         "longitude": -80.2517,
-         "precip": 0,
-         "precipProb": 0,
-         "sfcPres": 1012.2,
-         "spcHum": 5.4,
-         "temp": 56.9,
-         "windSpd": 8,
-         "windDir": 210
-     },
-     {
-         "timestamp": "2015-02-08T21:00:00-05:00",
-         "latitude": 36.096,
-         "longitude": -80.2517,
-         "precip": 0,
-         "precipProb": 0,
-         "sfcPres": 1012.3,
-         "spcHum": 5.6,
-         "temp": 55,
-         "windSpd": 7,
-         "windDir": 210
-     },
-     {
-         "timestamp": "2015-02-08T22:00:00-05:00",
-         "latitude": 36.096,
-         "longitude": -80.2517,
-         "precip": 0,
-         "precipProb": 0,
-         "sfcPres": 1012.5,
-         "spcHum": 5.8,
-         "temp": 53,
-         "windSpd": 7,
-         "windDir": 219.5
-     },
-     {
-         "timestamp": "2015-02-08T23:00:00-05:00",
-         "latitude": 36.096,
-         "longitude": -80.2517,
-         "precip": 0,
-         "precipProb": 0,
-         "sfcPres": 1012.5,
-         "spcHum": 6,
-         "temp": 52,
-         "windSpd": 7,
-         "windDir": 214.9
-     },
-     {
-         "timestamp": "2015-02-09T00:00:00-05:00",
-         "latitude": 36.096,
-         "longitude": -80.2517,
-         "precip": 0,
-         "precipProb": 0,
-         "sfcPres": 1012.4,
-         "spcHum": 6.5,
-         "temp": 52,
-         "windSpd": 7,
-         "windDir": 210
-     },
-     {
-         "timestamp": "2015-02-09T01:00:00-05:00",
-         "latitude": 36.096,
-         "longitude": -80.2517,
-         "precip": 0,
-         "precipProb": 0,
-         "sfcPres": 1012.2,
-         "spcHum": 6.8,
-         "temp": 51,
-         "windSpd": 7,
-         "windDir": 210
-     }];
 }]);
