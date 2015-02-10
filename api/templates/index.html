@@ -16,14 +16,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.1.0/lodash.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/angular-google-maps/2.0.12/angular-google-maps.min.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}"></script>
+  <script src="{{ STATIC_URL }}flightPlan.js"></script>
   <script src="{{ STATIC_URL }}app.js"></script>
 {% endblock %}
 
 {% block main_content %}
 <div ng-controller="MapController" id="map-canvas">
   <ui-gmap-google-map center='mapOptions.center' zoom='mapOptions.zoom'>
-    <ui-gmap-polyline path='weatherReportCoordinates' stroke='lineOptions.stroke' geodesic='lineOptions.geodesic'>
-    </ui-gmap-polyline>
+    <ui-gmap-polyline path='weatherReportCoordinates' stroke='lineOptions.stroke' geodesic='lineOptions.geodesic'></ui-gmap-polyline>
+    <ui-gmap-markers models="weatherReportCoordinates" coords="'self'" idKey="'intervalId'">
+      <ui-gmap-windows show="'show'" idKey="'intervalId'">Hello World!</ui-gmap-windows>
+    </ui-gmap-markers>
   </ui-gmap-google-map>
 </div>
 {% endblock %}

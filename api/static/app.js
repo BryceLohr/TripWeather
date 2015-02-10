@@ -1,4 +1,4 @@
-angular.module('TripWeather', ['uiGmapgoogle-maps'])
+angular.module('TripWeather', ['uiGmapgoogle-maps', 'FlightPlan'])
 
 .config(function(uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
@@ -7,33 +7,18 @@ angular.module('TripWeather', ['uiGmapgoogle-maps'])
     });
 })
 
-.controller('MapController', ['$scope', function($scope) {
-  $scope.departureLocation = new google.maps.LatLng(40.639751,-73.778925); // JFK
-  $scope.arrivalLocation = new google.maps.LatLng(37.618972,-122.374889); // SFO
-  $scope.departTime = new Date(2015, 1, 7, 8);
-  $scope.avgSpeed = 300; // miles per hour
-  $scope.reportInterval = 1; // hours
+.controller('MapController', ['$scope', 'getWeatherReportCoords', function($scope, getWeatherReportCoords) {
+  var departureLocation = { latitude: 40.639751, longitude: -73.778925 }; // JFK
+  var arrivalLocation = { latitude: 37.618972, longitude: -122.374889 }; // SFO
+  var departTime = new Date(2015, 1, 7, 8);
+  var avgSpeed = 300; // miles per hour
+  var reportInterval = 1; // hours
 
-  $scope.weatherReportCoordinates = [
-    $scope.departureLocation,
-    // new google.maps.LatLng(40.639751000000004,-73.778925),
-    new google.maps.LatLng(41.34843913707863,-79.19563578614297),
-    new google.maps.LatLng(41.79828792276403,-84.7094528354295),
-    new google.maps.LatLng(41.98152391306366,-90.27792457775081),
-    new google.maps.LatLng(41.89490005922622,-95.85483831531833),
-    new google.maps.LatLng(41.53995731818525,-101.39338776897682),
-    new google.maps.LatLng(40.922899672836124,-106.84943687506541),
-    new google.maps.LatLng(40.05410602614879,-112.18435700307927),
-    new google.maps.LatLng(38.9473669863364,-117.36703748446496),
-    $scope.arrivalLocation
-  ]
+  $scope.weatherReportCoordinates = getWeatherReportCoords(
+    departureLocation, arrivalLocation, departTime, avgSpeed, reportInterval);
 
   $scope.mapOptions = {
-    // angular-google-maps doesn't support google.map.LatLng objects
-    center: {
-      latitude: $scope.weatherReportCoordinates[5].lat(),
-      longitude: $scope.weatherReportCoordinates[5].lng()
-    },
+    center: $scope.weatherReportCoordinates.midpoint,
     mapTypeId: google.maps.MapTypeId.TERRAIN,
     zoom: 5
   };
