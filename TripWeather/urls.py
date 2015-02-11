@@ -9,11 +9,11 @@ from api.views import (
 
 
 urlpatterns = patterns('',
-    url(r'^$', 'api.views.index'),
+    url(r'^$', 'ui.views.index'),
 
-    url(r'^flight_plan$', FlightPlan.as_view()),
-    url(r'^weather_for_route$', WeatherForRoute.as_view()),
-    url(r'^weather_for_route/(\d+)$', WeatherForRouteDetail.as_view(), name='weather_detail'),
+    url(r'^api/flight_plan$', FlightPlan.as_view()),
+    url(r'^api/weather_for_route$', WeatherForRoute.as_view()),
+    url(r'^api/weather_for_route/(\d+)$', WeatherForRouteDetail.as_view(), name='weather_detail'),
 
     url(r'^admin/', include(admin.site.urls)),
 )

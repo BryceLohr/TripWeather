@@ -1,14 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
-from django.shortcuts import render
-from django.conf import settings
 
 from restless.views import Endpoint
-
-
-def index(request):
-    context = {'google_api_key': settings.GOOGLE_API_KEY}
-    return render(request, 'index.html', context)
 
 
 class FlightPlan(Endpoint):
