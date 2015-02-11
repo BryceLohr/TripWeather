@@ -23,3 +23,13 @@ class FlightPlan(Endpoint):
             { 'intervalId': 8, 'latitude': 38.9473669863364, 'longitude': -117.36703748446496 },
             { 'intervalId': 9, 'latitude': 37.618972, 'longitude': -122.374889 },
         ]
+
+
+class WeatherForRoute(Endpoint):
+    def post(self, request):
+        pass
+
+
+class WeatherForRouteDetail(Endpoint):
+    def get(self, request, forecast_id):
+        pass
