@@ -12,3 +12,4 @@ scipy==0.13.3
 pysal==1.9.1
 django-angular==0.7.10
 django-bootstrap3==5.1.1
+DjangoRestless==0.0.9
