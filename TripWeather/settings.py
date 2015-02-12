@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'restless',
     'bootstrap3',
     'djangular',
+    'ui',
     'api',
 )
 
