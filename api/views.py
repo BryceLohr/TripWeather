@@ -1,10 +1,11 @@
 import json
 
 from django.core.urlresolvers import reverse
+from django.forms.formsets import formset_factory
 from django.http import HttpResponse
 from restless.views import Endpoint
 
-from api import flight_plan
+from api import flight_plan, weather_report
 
 
 class FlightPlan(Endpoint):
@@ -27,14 +28,18 @@ class FlightPlan(Endpoint):
 
 class WeatherForRoute(Endpoint):
     def post(self, request):
-        # Query WeatherSource for weather at given coordinates and time stamps
-        # Create new RouteForecast to store results
-        forecast_id = 1
+        try:
+            decoded = json.loads(request.data)
+            multi_form = weather_report.MultiForm(weather_report.RouteForm, decoded)
+            if multi_form.is_valid():
+                forecast_id = weather_report.create(multi_form.cleaned_data)
 
-        response = HttpResponse(status=201)
-        response['Location'] = reverse('weather_detail', args=[forecast_id])
-
-        return response
+                response = HttpResponse(status=201)
+                response['Location'] = reverse('weather_detail', args=[forecast_id])
+            else:
+                return HttpResponse(json.dumps(multi_form.errors), status=400, content_type="text/json")
+        except ValueError:
+            return HttpResponse("Invalid JSON document", status=415)
 
 
 class WeatherForRouteDetail(Endpoint):
