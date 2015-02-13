@@ -99,7 +99,5 @@ BOOTSTRAP3 = {
 }
 
 # Local dev environment settings
-try:
-    from local_settings import *
-except ImportError:
-    pass
+GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
+WEATHERSOURCE_API_KEY = os.environ['WEATHERSOURCE_API_KEY']
