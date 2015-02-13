@@ -50,29 +50,7 @@ def create(route):
         weather = find_weather_for_time(weather, point['timestamp'])
         weather_list.append(weather)
 
-    return 1
-
-    # with transaction.atomic():
-    #     forecast = RouteForecast()
-    #     forecast.query_json = json.dumps(route)
-    #     forecast.save()
-
-    #     for weather in weather_list:
-    #         route_weather = RouteForecastWeather()
-    #         route_weather.route_forecast = forecast
-    #         timestamp = weather['timestamp']
-    #         latitude = weather['latitude']
-    #         longitude = weather['longitude']
-    #         precip = weather['precip']
-    #         precipProb = weather['precipProb']
-    #         sfcPres = weather['sfcPres']
-    #         spcHum = weather['spcHum']
-    #         temp = weather['temp']
-    #         windSpd = weather['windSpd']
-    #         windDir = weather['windDir']
-    #         route_weather.save()
-
-    # return forecast.id
+    return save_to_db(route, weather_list)
 
 def get_forecast_for_location(latitude, longitude):
     url = "https://api.weathersource.com/v1/{api_key}/forecast.json?latitude_eq={latitude}&longitude_eq={longitude}&period=hour&fields=latitude,longitude,timestamp,temp,precip,precipProb,windSpd,windDir,spcHum,sfcPres".format(
@@ -84,6 +62,29 @@ def get_forecast_for_location(latitude, longitude):
     return response.json()
 
 def find_weather_for_time(weather, timestamp):
-    print "Find weather for time: ", timestamp
-    for i, w in enumerate(weather):
-        print "Weather {0}: {1}".format(i, w['timestamp'])
+    # TODO: Find which weather forecast matches closet to the timestamp return that
+    return weather[0]
+
+
+def save_to_db(route, weather_list):
+    with transaction.atomic():
+        forecast = RouteForecast()
+        forecast.query_json = json.dumps(route)
+        forecast.save()
+
+        for weather in weather_list:
+            route_weather = RouteForecastWeather()
+            route_weather.route_forecast = forecast
+            timestamp = weather['timestamp']
+            latitude = weather['latitude']
+            longitude = weather['longitude']
+            precip = weather['precip']
+            precipProb = weather['precipProb']
+            sfcPres = weather['sfcPres']
+            spcHum = weather['spcHum']
+            temp = weather['temp']
+            windSpd = weather['windSpd']
+            windDir = weather['windDir']
+            route_weather.save()
+
+    return forecast.id
