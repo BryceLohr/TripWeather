@@ -11,8 +11,7 @@ from api import flight_plan, weather_report
 class FlightPlan(Endpoint):
     def post(self, request):
         try:
-            decoded = json.loads(request.data)
-            form = flight_plan.FlightPlanForm(decoded)
+            form = flight_plan.FlightPlanForm(request.data)
             if form.is_valid():
                 return flight_plan.build_flight_plan(
                     form.cleaned_data['depart_location'],
