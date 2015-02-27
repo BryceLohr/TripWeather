@@ -2,7 +2,6 @@ import json
 
 from django import forms
 from django.conf import settings
-from django.db import transaction
 from django.forms.formsets import BaseFormSet
 import requests
 
@@ -52,39 +51,3 @@ def create(route):
 
     return save_to_db(route, weather_list)
 
-def get_forecast_for_location(latitude, longitude):
-    url = "https://api.weathersource.com/v1/{api_key}/forecast.json?latitude_eq={latitude}&longitude_eq={longitude}&period=hour&fields=latitude,longitude,timestamp,temp,precip,precipProb,windSpd,windDir,spcHum,sfcPres".format(
-        api_key=settings.WEATHERSOURCE_API_KEY,
-        latitude=latitude,
-        longitude=longitude)
-
-    response = requests.get(url)
-    return response.json()
-
-def find_weather_for_time(weather, timestamp):
-    # TODO: Find which weather forecast matches closet to the timestamp return that
-    return weather[0]
-
-
-def save_to_db(route, weather_list):
-    with transaction.atomic():
-        forecast = RouteForecast()
-        forecast.query_json = json.dumps(route)
-        forecast.save()
-
-        for weather in weather_list:
-            route_weather = RouteForecastWeather()
-            route_weather.route_forecast = forecast
-            timestamp = weather['timestamp']
-            latitude = weather['latitude']
-            longitude = weather['longitude']
-            precip = weather['precip']
-            precipProb = weather['precipProb']
-            sfcPres = weather['sfcPres']
-            spcHum = weather['spcHum']
-            temp = weather['temp']
-            windSpd = weather['windSpd']
-            windDir = weather['windDir']
-            route_weather.save()
-
-    return forecast.id

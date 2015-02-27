@@ -13,12 +13,11 @@ class FlightPlan(Endpoint):
         try:
             form = flight_plan.FlightPlanForm(request.data)
             if form.is_valid():
-                return flight_plan.build_flight_plan(
-                    form.cleaned_data['depart_location'],
-                    form.cleaned_data['arrive_location'],
-                    form.cleaned_data['depart_time'],
-                    form.cleaned_data['planned_speed'],
-                    form.cleaned_data['report_interval'])
+                (plan, weather) = flight_plan.build_flight_plan(form)
+                flight_plan_id = flight_plan.persist(plan, weather)
+
+                response = HttpResponse(status=201)
+                response['Location'] = reverse('weather_detail', args=[flight_plan_id])
             else:
                 return HttpResponse(form.errors.as_json(), status=400, content_type="text/json")
         except ValueError:
