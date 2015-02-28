@@ -8,7 +8,7 @@ class Airport(models.Model):
     name = models.CharField(max_length=75)
     city = models.CharField(max_length=75)
     country = models.CharField(max_length=75)
-    iata_faa = models.CharField(max_length=3, db_index=True, null=True, blank=True)
+    iata_faa = models.CharField('airport code', max_length=3, db_index=True, null=True, blank=True)
     icao = models.CharField(max_length=4, null=True, blank=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
@@ -17,4 +17,5 @@ class Airport(models.Model):
     dst_code = models.CharField(max_length=1)
     tz_name = models.CharField(max_length=75, help_text="Name from the Olson timezone database")
 
-
+    def __unicode__(self):
+        return u"{0} {1}".format((self.iata_faa or ""), self.name).strip()
