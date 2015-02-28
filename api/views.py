@@ -2,13 +2,14 @@ import json
 
 from django.core.urlresolvers import reverse
 from django.forms.formsets import formset_factory
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from restless.views import Endpoint
+from restless.models import serialize
 
-from api import flight_plan, weather_report
+from api import flight_plan
 
 
-class FlightPlan(Endpoint):
+class FlightPlans(Endpoint):
     def post(self, request):
         try:
             form = flight_plan.FlightPlanForm(request.data)
@@ -17,7 +18,8 @@ class FlightPlan(Endpoint):
                 flight_plan_id = flight_plan.persist(plan, weather)
 
                 response = HttpResponse(status=201)
-                response['Location'] = reverse('weather_detail', args=[flight_plan_id])
+                # This should really go to a resource describing the flight plan itself, but this is fine for now
+                response['Location'] = reverse('weather', args=[flight_plan_id])
             else:
                 return HttpResponse(form.errors.as_json(), status=400, content_type="text/json")
         except ValueError:
@@ -25,142 +27,9 @@ class FlightPlan(Endpoint):
 
 
 class WeatherForRoute(Endpoint):
-    def post(self, request):
+    def get(self, request, flight_plan_id):
         try:
-            decoded = json.loads(request.data)
-            multi_form = weather_report.MultiForm(weather_report.RouteForm, decoded)
-            if multi_form.is_valid():
-                forecast_id = weather_report.create(multi_form.cleaned_data)
-
-                response = HttpResponse(status=201)
-                response['Location'] = reverse('weather_detail', args=[forecast_id])
-            else:
-                return HttpResponse(json.dumps(multi_form.errors), status=400, content_type="text/json")
-        except ValueError:
-            return HttpResponse("Invalid JSON document", status=415)
-
-
-class WeatherForRouteDetail(Endpoint):
-    def get(self, request, forecast_id):
-        return [
-            {
-                "timestamp": "2015-02-08T16:00:00-05:00",
-                "latitude": 36.096,
-                "longitude": -80.2517,
-                "precip": 0,
-                "precipProb": 0,
-                "sfcPres": 1011.4,
-                "spcHum": 5.2,
-                "temp": 66,
-                "windSpd": 15,
-                "windDir": 220
-            },
-            {
-                "timestamp": "2015-02-08T17:00:00-05:00",
-                "latitude": 36.096,
-                "longitude": -80.2517,
-                "precip": 0,
-                "precipProb": 0,
-                "sfcPres": 1011.4,
-                "spcHum": 5.1,
-                "temp": 64,
-                "windSpd": 14,
-                "windDir": 210
-            },
-            {
-                "timestamp": "2015-02-08T18:00:00-05:00",
-                "latitude": 36.096,
-                "longitude": -80.2517,
-                "precip": 0,
-                "precipProb": 0,
-                "sfcPres": 1011.6,
-                "spcHum": 5.1,
-                "temp": 62,
-                "windSpd": 12,
-                "windDir": 210
-            },
-            {
-                "timestamp": "2015-02-08T19:00:00-05:00",
-                "latitude": 36.096,
-                "longitude": -80.2517,
-                "precip": 0,
-                "precipProb": 0,
-                "sfcPres": 1011.8,
-                "spcHum": 5.1,
-                "temp": 58,
-                "windSpd": 10,
-                "windDir": 210
-            },
-            {
-                "timestamp": "2015-02-08T20:00:00-05:00",
-                "latitude": 36.096,
-                "longitude": -80.2517,
-                "precip": 0,
-                "precipProb": 0,
-                "sfcPres": 1012.2,
-                "spcHum": 5.4,
-                "temp": 56.9,
-                "windSpd": 8,
-                "windDir": 210
-            },
-            {
-                "timestamp": "2015-02-08T21:00:00-05:00",
-                "latitude": 36.096,
-                "longitude": -80.2517,
-                "precip": 0,
-                "precipProb": 0,
-                "sfcPres": 1012.3,
-                "spcHum": 5.6,
-                "temp": 55,
-                "windSpd": 7,
-                "windDir": 210
-            },
-            {
-                "timestamp": "2015-02-08T22:00:00-05:00",
-                "latitude": 36.096,
-                "longitude": -80.2517,
-                "precip": 0,
-                "precipProb": 0,
-                "sfcPres": 1012.5,
-                "spcHum": 5.8,
-                "temp": 53,
-                "windSpd": 7,
-                "windDir": 219.5
-            },
-            {
-                "timestamp": "2015-02-08T23:00:00-05:00",
-                "latitude": 36.096,
-                "longitude": -80.2517,
-                "precip": 0,
-                "precipProb": 0,
-                "sfcPres": 1012.5,
-                "spcHum": 6,
-                "temp": 52,
-                "windSpd": 7,
-                "windDir": 214.9
-            },
-            {
-                "timestamp": "2015-02-09T00:00:00-05:00",
-                "latitude": 36.096,
-                "longitude": -80.2517,
-                "precip": 0,
-                "precipProb": 0,
-                "sfcPres": 1012.4,
-                "spcHum": 6.5,
-                "temp": 52,
-                "windSpd": 7,
-                "windDir": 210
-            },
-            {
-                "timestamp": "2015-02-09T01:00:00-05:00",
-                "latitude": 36.096,
-                "longitude": -80.2517,
-                "precip": 0,
-                "precipProb": 0,
-                "sfcPres": 1012.2,
-                "spcHum": 6.8,
-                "temp": 51,
-                "windSpd": 7,
-                "windDir": 210
-            }
-        ]
+            weather = flight_plan.get_weather_reports(flight_plan_id)
+            return serialize(weather)
+        except flight_plan.NotFound:
+            return HttpResponseNotFound()

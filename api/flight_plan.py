@@ -162,3 +162,15 @@ def persist(flight_plan, weather_list):
             weather.save()
 
     return flight_plan.id
+
+
+def get_weather_reports(flight_plan_id):
+    try:
+        return WeatherReport.objects.filter(flight_plan_id=flight_plan_id).order_by('id')
+    except WeatherReport.NotFound as e:
+        # Wrapping exception to keep storage implementation behind facade
+        raise NotFound(str(e))
+
+
+class NotFound(Exception):
+    pass
