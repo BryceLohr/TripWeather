@@ -24,7 +24,7 @@
 {% block main_content %}
 <div class="row" id="container">
   <div class="col-md-4" id="sidebar">
-    <form>
+    <form data-bind="submit: buildFlightPlan">
       <fieldset>
         <p class="form-group">
           <label for="depart_location">Depart from</label>
@@ -54,6 +54,23 @@
         <button type="submit" class="btn btn-primary">Plan Flight</button>
       </fieldset>
     </form>
+    <div data-bind="foreach: weatherReports, visible: weatherReports().length > 0">
+      <div class="weatherReport">
+        Timestamp: <span data-bind="text: timestamp"></span>
+        Latitude: <span data-bind="text: latitude"></span>
+        Longitude: <span data-bind="text: longitude"></span>
+        Cloud cover: <span data-bind="text: cldCvr"></span>
+        Precipitation chance: <span data-bind="text: precipProb"></span>
+        Precipitation: <span data-bind="text: precip"></span>
+        Surface pressure: <span data-bind="text: sfcPres"></span>
+        Snowfall: <span data-bind="text: snowfall"></span>
+        Snowfall chance: <span data-bind="text: snowfallProb"></span>
+        Specific humidity: <span data-bind="text: spcHum"></span>
+        Temperature: <span data-bind="text: temp"></span>
+        Wind speed: <span data-bind="text: windSpd"></span>
+        Wind direction: <span data-bind="text: windDir"></span>
+      </div>
+    </div>
   </div>
   <div class="col-md-8" id="map-canvas"></div>
 </div>

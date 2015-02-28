@@ -14,6 +14,7 @@ var TripWeather = function() {
             // Post form to API
             // Get URL for new flight plan's weather
             // Request weather, store in weatherReports
+            this.weatherReports(weatherData);
             // Hide busy indicator
         };
     };
@@ -36,137 +37,160 @@ var TripWeather = function() {
     }
     */
 
-  var weatherData = [
-  {
-    "intervalId": 0,
-     "timestamp": "2015-02-08T16:00:00-05:00",
-     "latitude": 36.096,
-     "longitude": -80.2517,
-     "precip": 0,
-     "precipProb": 0,
-     "sfcPres": 1011.4,
-     "spcHum": 5.2,
-     "temp": 66,
-     "windSpd": 15,
-     "windDir": 220
-  },
-  {
-    "intervalId": 1,
-     "timestamp": "2015-02-08T17:00:00-05:00",
-     "latitude": 36.096,
-     "longitude": -80.2517,
-     "precip": 0,
-     "precipProb": 0,
-     "sfcPres": 1011.4,
-     "spcHum": 5.1,
-     "temp": 64,
-     "windSpd": 14,
-     "windDir": 210
-  },
-  {
-    "intervalId": 2,
-     "timestamp": "2015-02-08T18:00:00-05:00",
-     "latitude": 36.096,
-     "longitude": -80.2517,
-     "precip": 0,
-     "precipProb": 0,
-     "sfcPres": 1011.6,
-     "spcHum": 5.1,
-     "temp": 62,
-     "windSpd": 12,
-     "windDir": 210
-  },
-  {
-    "intervalId": 3,
-     "timestamp": "2015-02-08T19:00:00-05:00",
-     "latitude": 36.096,
-     "longitude": -80.2517,
-     "precip": 0,
-     "precipProb": 0,
-     "sfcPres": 1011.8,
-     "spcHum": 5.1,
-     "temp": 58,
-     "windSpd": 10,
-     "windDir": 210
-  },
-  {
-    "intervalId": 4,
-     "timestamp": "2015-02-08T20:00:00-05:00",
-     "latitude": 36.096,
-     "longitude": -80.2517,
-     "precip": 0,
-     "precipProb": 0,
-     "sfcPres": 1012.2,
-     "spcHum": 5.4,
-     "temp": 56.9,
-     "windSpd": 8,
-     "windDir": 210
-  },
-  {
-    "intervalId": 5,
-     "timestamp": "2015-02-08T21:00:00-05:00",
-     "latitude": 36.096,
-     "longitude": -80.2517,
-     "precip": 0,
-     "precipProb": 0,
-     "sfcPres": 1012.3,
-     "spcHum": 5.6,
-     "temp": 55,
-     "windSpd": 7,
-     "windDir": 210
-  },
-  {
-    "intervalId": 6,
-     "timestamp": "2015-02-08T22:00:00-05:00",
-     "latitude": 36.096,
-     "longitude": -80.2517,
-     "precip": 0,
-     "precipProb": 0,
-     "sfcPres": 1012.5,
-     "spcHum": 5.8,
-     "temp": 53,
-     "windSpd": 7,
-     "windDir": 219.5
-  },
-  {
-    "intervalId": 7,
-     "timestamp": "2015-02-08T23:00:00-05:00",
-     "latitude": 36.096,
-     "longitude": -80.2517,
-     "precip": 0,
-     "precipProb": 0,
-     "sfcPres": 1012.5,
-     "spcHum": 6,
-     "temp": 52,
-     "windSpd": 7,
-     "windDir": 214.9
-  },
-  {
-    "intervalId": 8,
-     "timestamp": "2015-02-09T00:00:00-05:00",
-     "latitude": 36.096,
-     "longitude": -80.2517,
-     "precip": 0,
-     "precipProb": 0,
-     "sfcPres": 1012.4,
-     "spcHum": 6.5,
-     "temp": 52,
-     "windSpd": 7,
-     "windDir": 210
-  },
-  {
-    "intervalId": 9,
-     "timestamp": "2015-02-09T01:00:00-05:00",
-     "latitude": 36.096,
-     "longitude": -80.2517,
-     "precip": 0,
-     "precipProb": 0,
-     "sfcPres": 1012.2,
-     "spcHum": 6.8,
-     "temp": 51,
-     "windSpd": 7,
-     "windDir": 210
-  }];
+    var weatherData = [
+    {
+        "cldCvr": 1,
+        "temp": 23.8,
+        "flight_plan": 3,
+        "timestamp": "2015-02-28T01:30:09Z",
+        "sfcPres": 1033.7,
+        "longitude": -73.778925,
+        "windDir": 323.2,
+        "precip": 0,
+        "spcHum": 1.1,
+        "snowfall": 0,
+        "windSpd": 9.1,
+        "snowfallProb": null,
+        "latitude": 40.639751,
+        "id": 12,
+        "precipProb": 0
+    },
+    {
+        "cldCvr": 16,
+        "temp": -0.9,
+        "flight_plan": 3,
+        "timestamp": "2015-02-28T02:30:09Z",
+        "sfcPres": 1040.3,
+        "longitude": -79.4507028903156,
+        "windDir": 280.1,
+        "precip": 0,
+        "spcHum": 0.8,
+        "snowfall": 0,
+        "windSpd": 0,
+        "snowfallProb": null,
+        "latitude": 41.3752253488061,
+        "id": 13,
+        "precipProb": 0
+    },
+    {
+        "cldCvr": 30,
+        "temp": 5,
+        "flight_plan": 3,
+        "timestamp": "2015-02-28T03:30:09Z",
+        "sfcPres": 1040.8,
+        "longitude": -85.2267612152091,
+        "windDir": 240,
+        "precip": 0,
+        "spcHum": 0.8,
+        "snowfall": 0,
+        "windSpd": 3,
+        "snowfallProb": null,
+        "latitude": 41.8267133364137,
+        "id": 14,
+        "precipProb": 0
+    },
+    {
+        "cldCvr": 1,
+        "temp": -6.1,
+        "flight_plan": 3,
+        "timestamp": "2015-02-28T04:30:09Z",
+        "sfcPres": 1041.7,
+        "longitude": -91.0580620400133,
+        "windDir": 204.6,
+        "precip": 0,
+        "spcHum": 0.6,
+        "snowfall": 0,
+        "windSpd": 3,
+        "snowfallProb": null,
+        "latitude": 41.9856558083083,
+        "id": 15,
+        "precipProb": 0
+    },
+    {
+        "cldCvr": 17.4,
+        "temp": 7,
+        "flight_plan": 3,
+        "timestamp": "2015-02-28T05:30:09Z",
+        "sfcPres": 1036.9,
+        "longitude": -96.8913978529929,
+        "windDir": 150,
+        "precip": 0,
+        "spcHum": 0.9,
+        "snowfall": 0,
+        "windSpd": 7,
+        "snowfallProb": null,
+        "latitude": 41.8489656306218,
+        "id": 16,
+        "precipProb": 0
+    },
+    {
+        "cldCvr": 73.6,
+        "temp": 11.1,
+        "flight_plan": 3,
+        "timestamp": "2015-02-28T06:30:09Z",
+        "sfcPres": 1025.9,
+        "longitude": -102.673404662911,
+        "windDir": 170,
+        "precip": 0,
+        "spcHum": 1.3,
+        "snowfall": 0,
+        "windSpd": 15.8,
+        "snowfallProb": null,
+        "latitude": 41.4193000878005,
+        "id": 17,
+        "precipProb": 0
+    },
+    {
+        "cldCvr": 68,
+        "temp": 20.9,
+        "flight_plan": 3,
+        "timestamp": "2015-02-28T07:30:09Z",
+        "sfcPres": 1011.8,
+        "longitude": -108.354602779854,
+        "windDir": 100,
+        "precip": 0,
+        "spcHum": 2,
+        "snowfall": 0,
+        "windSpd": 3,
+        "snowfallProb": null,
+        "latitude": 40.7048260560287,
+        "id": 18,
+        "precipProb": 0
+    },
+    {
+        "cldCvr": 98.3,
+        "temp": 30,
+        "flight_plan": 3,
+        "timestamp": "2015-02-28T08:30:09Z",
+        "sfcPres": 1003.9,
+        "longitude": -113.892766300908,
+        "windDir": 141.7,
+        "precip": 0.01,
+        "spcHum": 2.6,
+        "snowfall": 0.12,
+        "windSpd": 3.9,
+        "snowfallProb": null,
+        "latitude": 39.718525821211,
+        "id": 19,
+        "precipProb": 48.44
+    },
+    {
+        "cldCvr": 80.9,
+        "temp": 50.6,
+        "flight_plan": 3,
+        "timestamp": "2015-02-28T10:06:06.537Z",
+        "sfcPres": 1007.5,
+        "longitude": -122.374889,
+        "windDir": 306.3,
+        "precip": 0,
+        "spcHum": 7.3,
+        "snowfall": 0,
+        "windSpd": 17.6,
+        "snowfallProb": null,
+        "latitude": 37.618972,
+        "id": 20,
+        "precipProb": 30
+    }];
 
     var drawMap = function() {
 
@@ -212,14 +236,16 @@ var TripWeather = function() {
             position: coords,
             map: map
         });
-        var weatherReport = new google.maps.InfoWindow({
-          position: coords,
-          content: "Weather report for hour "+reportNum+".<br>" +
-            "PrecipProb: "+weatherData[reportNum]["precipProb"]+", temp: "+weatherData[reportNum]["temp"]
-        });
-        google.maps.event.addListener(marker, 'click', function() {
-          weatherReport.open(map, marker);
-        });
+        if (weatherData[reportNum]) {
+            var weatherReport = new google.maps.InfoWindow({
+              position: coords,
+              content: "Weather report for hour "+reportNum+".<br>" +
+                "PrecipProb: "+weatherData[reportNum]["precipProb"]+", temp: "+weatherData[reportNum]["temp"]
+            });
+            google.maps.event.addListener(marker, 'click', function() {
+              weatherReport.open(map, marker);
+            });
+        }
       };
 
       for (var i=0; i<weatherReportCoordinates.length; i++) {
@@ -236,6 +262,8 @@ var TripWeather = function() {
 
       flightPath.setMap(map);
     };
+
+    ko.applyBindings(new FlightPlan());
 
     return {drawMap: drawMap};
 
