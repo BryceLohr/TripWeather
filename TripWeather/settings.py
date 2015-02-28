@@ -38,7 +38,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'restless',
     'bootstrap3',
-    'djangular',
     'ui',
     'api',
 )
