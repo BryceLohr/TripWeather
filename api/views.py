@@ -20,6 +20,7 @@ class FlightPlans(Endpoint):
                 response = HttpResponse(status=201)
                 # This should really go to a resource describing the flight plan itself, but this is fine for now
                 response['Location'] = reverse('weather', args=[flight_plan_id])
+                return response
             else:
                 return HttpResponse(form.errors.as_json(), status=400, content_type="text/json")
         except ValueError:
