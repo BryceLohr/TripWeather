@@ -2,8 +2,8 @@
 
 {% block styles %}
   <style type="text/css">
-    html, body, #map-canvas {
-      height: 100%; margin: 0; padding: 0;
+    html, body, #container, #sidebar, #map-canvas {
+      height: 100%;
     }
   </style>
 {% endblock %}
@@ -22,5 +22,39 @@
 {% endblock %}
 
 {% block main_content %}
-<div id="map-canvas"></div>
+<div class="row" id="container">
+  <div class="col-md-4" id="sidebar">
+    <form>
+      <fieldset>
+        <p class="form-group">
+          <label for="depart_location">Depart from</label>
+          <input class="form-control" id="depart_location" type="text" required>
+          <span class="help-block">Three-letter airport code (i.e., "JFK") or latitude and longitude pair, separated by a comma.</span>
+        </p>
+        <p class="form-group">
+          <label for="arrive_location">Arrive at</label>
+          <input class="form-control" id="arrive_location" type="text" required>
+          <span class="help-block">Three-letter airport code (i.e., "JFK") or latitude and longitude pair, separated by a comma.</span>
+        </p>
+        <p class="form-group">
+          <label for="depart_time">Depart time</label>
+          <input class="form-control" id="depart_time" type="text" required>
+          <span class="help-block">Date and 24-hour time in YYYY-MM-DD HH:MM format</span>
+        </p>
+        <p class="form-group">
+          <label for="planned_speed">Planned speed</label>
+          <input class="form-control" id="planned_speed" type="number" min="1" required>
+          <span class="help-block">Average aircraft speed, in miles per hour</span>
+        </p>
+        <p class="form-group">
+          <label for="report_interval">Weather report interval</label>
+          <input class="form-control" id="report_interval" type="number" min="1" required>
+          <span class="help-block">Number of hours between weather reports along flight path</span>
+        </p>
+        <button type="submit" class="btn btn-primary">Plan Flight</button>
+      </fieldset>
+    </form>
+  </div>
+  <div class="col-md-8" id="map-canvas"></div>
+</div>
 {% endblock %}

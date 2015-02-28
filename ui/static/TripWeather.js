@@ -193,7 +193,7 @@ var TripWeather = function() {
       var mapOptions = {
         center: weatherReportCoordinates.midpoint,
         mapTypeId: google.maps.MapTypeId.TERRAIN,
-        zoom: 5
+        zoom: 4
       };
 
       var lineOptions = {
