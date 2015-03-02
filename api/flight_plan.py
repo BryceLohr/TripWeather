@@ -104,6 +104,7 @@ def build_weather_report(latitude, longitude, utc_report_time):
             timestamp=local_report_time,
             latitude=latitude,
             longitude=longitude,
+            available=True,
             cldCvr=weather_at_time['cldCvr'],
             precip=weather_at_time['precip'],
             precipProb=weather_at_time['precipProb'],
@@ -119,7 +120,12 @@ def build_weather_report(latitude, longitude, utc_report_time):
         return weather_report
 
     except TimeNotInForecast:
-        return None
+        return WeatherReport(
+            timestamp=local_report_time,
+            latitude=latitude,
+            longitude=longitude,
+            available=False
+        )
 
 def get_local_timezone(latitude, longitude, utc_datetime):
     tz_api_url = "https://maps.googleapis.com/maps/api/timezone/json"

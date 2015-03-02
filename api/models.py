@@ -21,6 +21,7 @@ class WeatherReport(models.Model):
     timestamp = models.DateTimeField()
     latitude = models.FloatField()
     longitude = models.FloatField()
+    available = models.BooleanField(default=True)
     cldCvr = models.FloatField('cloud cover', null=True, help_text="Percentage")
     precip = models.FloatField('precipitation', null=True, help_text="In inches")
     precipProb = models.FloatField('precipitation chance', null=True, help_text="Percentage")
