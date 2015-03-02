@@ -64,8 +64,15 @@ def build_flight_plan(flight_plan_form):
     # PySAL wants lat/lon as lon/lat
     depart = (new_flight_plan.depart_longitude, new_flight_plan.depart_latitude)
     arrive = (new_flight_plan.arrive_longitude, new_flight_plan.arrive_latitude)
-    utc_depart_time = new_flight_plan.depart_time
     interval = new_flight_plan.report_interval
+
+    # The depart_time is assigned the UTC time zone because the default time
+    # zone is set to UTC in settings. We need to interpret the given time as
+    # the local time of the depart_location, not as UTC. Then we can get the
+    # UTC equivalent of the local depart time.
+    local_timezone = get_local_timezone(depart[1], depart[0], new_flight_plan.depart_time)
+    local_depart_time = new_flight_plan.depart_time.replace(tzinfo=local_timezone)
+    utc_depart_time = pytz.utc.normalize(local_depart_time.astimezone(pytz.utc))
 
     miles = sphere.arcdist(depart, arrive, sphere.RADIUS_EARTH_MILES)
     hours = miles / float(new_flight_plan.planned_speed)
@@ -87,7 +94,8 @@ def build_flight_plan(flight_plan_form):
     return (new_flight_plan, weather_reports)
 
 def build_weather_report(latitude, longitude, utc_report_time):
-    local_report_time = get_local_time(latitude, longitude, utc_report_time)
+    local_timezone = get_local_timezone(latitude, longitude, utc_report_time)
+    local_report_time = local_timezone.normalize(utc_report_time.astimezone(local_timezone))
     local_forecast = get_forecast_for_location(latitude, longitude)
 
     try:
@@ -113,7 +121,7 @@ def build_weather_report(latitude, longitude, utc_report_time):
     except TimeNotInForecast:
         return None
 
-def get_local_time(latitude, longitude, utc_datetime):
+def get_local_timezone(latitude, longitude, utc_datetime):
     tz_api_url = "https://maps.googleapis.com/maps/api/timezone/json"
     api_params = {
         'location': "{0},{1}".format(latitude, longitude),
@@ -122,9 +130,7 @@ def get_local_time(latitude, longitude, utc_datetime):
     }
 
     tz_data = requests.get(tz_api_url, params=api_params).json()
-    local_timezone = pytz.timezone(tz_data['timeZoneId'])
-
-    return local_timezone.normalize(utc_datetime.astimezone(local_timezone))
+    return pytz.timezone(tz_data['timeZoneId'])
 
 def get_forecast_for_location(latitude, longitude):
     weather_api_url = "https://api.weathersource.com/v1/{api_key}/forecast.json".format(api_key=settings.WEATHERSOURCE_API_KEY)
@@ -142,8 +148,8 @@ def find_weather_for_time(forecast, timestamp):
     for weather in forecast:
         weather_time = parse_datetime(weather['timestamp'])
         # Truncate the given time to its current hour, since WeatherSource returns times on the hour
-        given_time = timestamp.replace(minute=0, second=0, microsecond=0)
-        if weather_time == given_time:
+        target_time = timestamp.replace(minute=0, second=0, microsecond=0)
+        if weather_time == target_time:
             return weather
 
     raise TimeNotInForecast("No weather forecast was found for time {0}".format(timestamp))
