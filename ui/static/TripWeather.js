@@ -11,6 +11,7 @@ var TripWeather = function() {
 
         self.weatherReports = ko.observableArray();
         self.weatherReportCoordinates = [];
+        self.flightMidpoint = [];
 
         self.isLoading = ko.observable(false);
         self.errors = ko.observable({});
@@ -78,8 +79,9 @@ var TripWeather = function() {
         self._updateState = function(data) {
             // Update coords first, since the map update triggered by updating
             // the reports array depends on them being available
-            self.weatherReportCoordinates = self._getReportCoordinates(data);
-            self.weatherReports(data);
+            self.weatherReportCoordinates = self._getReportCoordinates(data['weatherreport_set']);
+            self.flightMidpoint = [data['midpoint_latitude'], data['midpoint_longitude']];
+            self.weatherReports(data['weatherreport_set']);
         };
 
         self._getReportCoordinates = function(data) {
@@ -91,10 +93,11 @@ var TripWeather = function() {
 
     ko.bindingHandlers.googleMap = {
         init: function(element, valueAccessor, allBindings, deprecated, bindingContext) {
-            var midpoint = new google.maps.LatLng(41.89490005922622, -95.85483831531833);
+            // Start in the middle of the USA
+            var defaultMidpoint = new google.maps.LatLng(41.89490005922622, -95.85483831531833);
 
             var mapOptions = {
-                center: midpoint,
+                center: defaultMidpoint,
                 mapTypeId: google.maps.MapTypeId.TERRAIN,
                 zoom: 4
             };
@@ -117,22 +120,30 @@ var TripWeather = function() {
             }
 
             var coords = bindingContext.$data.weatherReportCoordinates;
+            var midpoint = new google.maps.LatLng(bindingContext.$data.flightMidpoint[0], bindingContext.$data.flightMidpoint[1]);
+
+            bindingContext.$data.map.setCenter(midpoint);
 
             var addWeatherReportToMap = function(map, reportNum, coord) {
+                if (weatherData[reportNum].available) {
+                    var content = "Weather report for interval "+reportNum+".<br>" +
+                        "Temp: "+weatherData[reportNum]["temp"]+", cloud cover: "+weatherData[reportNum]["cldCvr"]+"<br>" +
+                        "precip chance: "+weatherData[reportNum]["precipProb"]+", wind speed: "+weatherData[reportNum]["windSpd"];
+                } else {
+                    var content = "No weather data available for this interval";
+                }
+
                 var marker = new google.maps.Marker({
                     position: coord,
                     map: map
                 });
-                if (weatherData[reportNum].available) {
-                    var weatherReport = new google.maps.InfoWindow({
-                        position: coord,
-                        content: "Weather report for hour "+reportNum+".<br>" +
-                          "PrecipProb: "+weatherData[reportNum]["precipProb"]+", temp: "+weatherData[reportNum]["temp"]
-                    });
-                    google.maps.event.addListener(marker, 'click', function() {
-                        weatherReport.open(map, marker);
-                    });
-                }
+                var weatherReport = new google.maps.InfoWindow({
+                    position: coord,
+                    content: content
+                });
+                google.maps.event.addListener(marker, 'click', function() {
+                    weatherReport.open(map, marker);
+                });
             };
 
             for (var i=0; i<coords.length; i++) {

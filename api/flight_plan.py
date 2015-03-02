@@ -91,6 +91,11 @@ def build_flight_plan(flight_plan_form):
     utc_arrive_time = utc_depart_time + timedelta(hours=hours)
     reports = int(math.floor(hours / min(interval, hours)))
 
+    # Provides the point to center the map on
+    midpoint = sphere.geointerpolate(depart, arrive, 0.5)
+    new_flight_plan.midpoint_latitude = midpoint[1]
+    new_flight_plan.midpoint_longitude = midpoint[0]
+
     weather_reports = []
     for i in range(reports):
         coords = sphere.geointerpolate(depart, arrive, (i*interval)/float(hours))
@@ -188,11 +193,10 @@ def persist(flight_plan, weather_list):
     return flight_plan.id
 
 
-def get_weather_reports(flight_plan_id):
+def get_flight_plan(flight_plan_id):
     try:
-        return WeatherReport.objects.filter(flight_plan_id=flight_plan_id).order_by('id')
-    except WeatherReport.NotFound as e:
-        # Wrapping exception to keep storage implementation behind facade
+        return FlightPlan.objects.get(pk=flight_plan_id)
+    except (FlightPlan.NotFound, WeatherReport.NotFound) as e:
         raise NotFound(str(e))
 
 

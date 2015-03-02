@@ -30,7 +30,7 @@ class FlightPlans(Endpoint):
 class WeatherForRoute(Endpoint):
     def get(self, request, flight_plan_id):
         try:
-            weather = flight_plan.get_weather_reports(flight_plan_id)
-            return serialize(weather)
+            plan = flight_plan.get_flight_plan(flight_plan_id)
+            return serialize(plan, include=[('weatherreport_set', dict())])
         except flight_plan.NotFound:
             return HttpResponseNotFound()

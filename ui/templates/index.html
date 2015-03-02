@@ -79,10 +79,18 @@
     </form>
     <div data-bind="foreach: weatherReports, visible: weatherReports().length > 0">
       <div class="weatherReport">
-        <table>
+        <p data-bind="if: !available">
+          There is no weather data available for report interval <span data-bind="text: $index() + 1"></span>
+        </p>
+        <table data-bind="if: available">
           <tr>
-            <td>Timestamp: <span data-bind="text: timestamp">2015-03-02T03:03:00Z</span></td>
-            <td>Location: <span data-bind="text: latitude">40.639751</span>,<span data-bind="text: longitude">-73.778925</span></td>
+            <td colspan="2">Interval #: <span data-bind="text: $index() + 1">1</span></td>
+          </tr>
+          <tr>
+            <td colspan="2">Location: <span data-bind="text: latitude">40.639751</span>,<span data-bind="text: longitude">-73.778925</span></td>
+          </tr>
+          <tr>
+            <td colspan="2">Timestamp: <span data-bind="text: timestamp">2015-03-02T03:03:00Z</span></td>
           </tr>
           <tr>
             <td>Cloud cover: <span data-bind="text: cldCvr">100</span>%</td>

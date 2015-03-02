@@ -7,6 +7,8 @@ class FlightPlan(models.Model):
     depart_longitude = models.FloatField()
     arrive_latitude = models.FloatField()
     arrive_longitude = models.FloatField()
+    midpoint_latitude = models.FloatField()
+    midpoint_longitude = models.FloatField()
     depart_time = models.DateTimeField()
     planned_speed = models.IntegerField()
     report_interval = models.IntegerField()
