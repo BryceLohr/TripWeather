@@ -89,7 +89,7 @@ def build_flight_plan(flight_plan_form):
     miles = sphere.arcdist(depart, arrive, sphere.RADIUS_EARTH_MILES)
     hours = miles / float(new_flight_plan.planned_speed)
     utc_arrive_time = utc_depart_time + timedelta(hours=hours)
-    reports = int(math.floor(hours / min(interval, hours)))
+    reports = min(int(math.floor(hours / min(interval, hours))), 50)
 
     # Provides the point to center the map on
     midpoint = sphere.geointerpolate(depart, arrive, 0.5)
@@ -152,8 +152,13 @@ def get_local_timezone(latitude, longitude, utc_datetime):
         'api_key': settings.GOOGLE_API_KEY,
     }
 
-    tz_data = requests.get(tz_api_url, params=api_params).json()
-    return pytz.timezone(tz_data['timeZoneId'])
+    response = requests.get(tz_api_url, params=api_params)
+    response.raise_for_status()
+    tz_data = response.json()
+    try:
+        return pytz.timezone(response.json()['timeZoneId'])
+    except KeyError:
+        raise TimezoneLookupError()
 
 def get_forecast_for_location(latitude, longitude):
     weather_api_url = "https://api.weathersource.com/v1/{api_key}/forecast.json".format(api_key=settings.WEATHERSOURCE_API_KEY)
@@ -165,6 +170,7 @@ def get_forecast_for_location(latitude, longitude):
     }
 
     response = requests.get(weather_api_url, params=api_params)
+    response.raise_for_status()
     return response.json()
 
 def find_weather_for_time(forecast, timestamp):
@@ -176,10 +182,6 @@ def find_weather_for_time(forecast, timestamp):
             return weather
 
     raise TimeNotInForecast("No weather forecast was found for time {0}".format(timestamp))
-
-
-class TimeNotInForecast(Exception):
-    pass
 
 
 def persist(flight_plan, weather_list):
@@ -202,3 +204,10 @@ def get_flight_plan(flight_plan_id):
 
 class NotFound(Exception):
     pass
+
+class TimeNotInForecast(Exception):
+    pass
+
+class TimezoneLookupError(Exception):
+    pass
+
