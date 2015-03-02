@@ -92,12 +92,16 @@ var TripWeather = function() {
     };
 
     ko.bindingHandlers.googleMap = {
-        init: function(element, valueAccessor, allBindings, deprecated, bindingContext) {
-            // Start in the middle of the USA
-            var defaultMidpoint = new google.maps.LatLng(41.89490005922622, -95.85483831531833);
+        update: function(element, valueAccessor, allBindings, deprecated, bindingContext) {
+            if (bindingContext.$data.flightMidpoint.length > 0) {
+                var midpoint = new google.maps.LatLng(bindingContext.$data.flightMidpoint[0], bindingContext.$data.flightMidpoint[1]);
+            } else {
+                // Default to the middle of the USA
+                var midpoint = new google.maps.LatLng(41.89490005922622, -95.85483831531833);
+            }
 
             var mapOptions = {
-                center: defaultMidpoint,
+                center: midpoint,
                 mapTypeId: google.maps.MapTypeId.TERRAIN,
                 zoom: 4
             };
@@ -111,24 +115,20 @@ var TripWeather = function() {
                 geodesic: true
             };
 
-            bindingContext.$data.map = new google.maps.Map(element, mapOptions);
-        },
-        update: function(element, valueAccessor, allBindings, deprecated, bindingContext) {
+            var map = new google.maps.Map(element, mapOptions);
+
             var weatherData = ko.unwrap(valueAccessor());
             if (weatherData.length < 1) {
                 return;
             }
 
             var coords = bindingContext.$data.weatherReportCoordinates;
-            var midpoint = new google.maps.LatLng(bindingContext.$data.flightMidpoint[0], bindingContext.$data.flightMidpoint[1]);
-
-            bindingContext.$data.map.setCenter(midpoint);
 
             var addWeatherReportToMap = function(map, reportNum, coord) {
                 if (weatherData[reportNum].available) {
                     var content = "Weather report for interval "+reportNum+".<br>" +
                         "Temp: "+weatherData[reportNum]["temp"]+", cloud cover: "+weatherData[reportNum]["cldCvr"]+"<br>" +
-                        "precip chance: "+weatherData[reportNum]["precipProb"]+", wind speed: "+weatherData[reportNum]["windSpd"];
+                        "Precip chance: "+weatherData[reportNum]["precipProb"]+", wind speed: "+weatherData[reportNum]["windSpd"];
                 } else {
                     var content = "No weather data available for this interval";
                 }
@@ -147,7 +147,7 @@ var TripWeather = function() {
             };
 
             for (var i=0; i<coords.length; i++) {
-                addWeatherReportToMap(bindingContext.$data.map, i, coords[i]);
+                addWeatherReportToMap(map, i, coords[i]);
             }
 
             var flightPath = new google.maps.Polyline({
@@ -158,7 +158,7 @@ var TripWeather = function() {
                 strokeWeight: 2
             });
 
-            flightPath.setMap(bindingContext.$data.map);
+            flightPath.setMap(map);
         }
     };
 
