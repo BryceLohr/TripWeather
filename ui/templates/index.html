@@ -5,6 +5,26 @@
     html, body, #container, #sidebar, #map-canvas {
       height: 100%;
     }
+    fieldset {
+      border: 1px solid #E5E5E5;
+      padding: 0.5em;
+      margin-left: 0.5em;
+      border-radius: 4px;
+    }
+    fieldset legend {
+      border: none;
+      width: auto;
+      margin: auto;
+    }
+    .weatherReport {
+      border: 1px solid #E5E5E5;
+      background-color: #EEE;
+      margin: 0.5em;
+      padding: 0.25em;
+    }
+    .weatherReport table tr td:first-child {
+      padding-right: 0.25em;
+    }
   </style>
 {% endblock %}
 
@@ -15,10 +35,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}"></script>
   <script src="{{ STATIC_URL }}TripWeather.js"></script>
-
-  <script>
-    TripWeather.drawMap();
-  </script>
 {% endblock %}
 
 {% block main_content %}
@@ -26,6 +42,7 @@
   <div class="col-md-4" id="sidebar">
     <form data-bind="submit: buildFlightPlan">
       <fieldset>
+        <legend>Get weather for flight path</legend>
         <p class="form-group">
           <label for="departLocation">Depart from</label>
           <input class="form-control" id="departLocation" data-bind="value: departLocation" type="text" required>
@@ -57,22 +74,35 @@
     </form>
     <div data-bind="foreach: weatherReports, visible: weatherReports().length > 0">
       <div class="weatherReport">
-        Timestamp: <span data-bind="text: timestamp"></span>
-        Latitude: <span data-bind="text: latitude"></span>
-        Longitude: <span data-bind="text: longitude"></span>
-        Cloud cover: <span data-bind="text: cldCvr"></span>
-        Precipitation chance: <span data-bind="text: precipProb"></span>
-        Precipitation: <span data-bind="text: precip"></span>
-        Surface pressure: <span data-bind="text: sfcPres"></span>
-        Snowfall: <span data-bind="text: snowfall"></span>
-        Snowfall chance: <span data-bind="text: snowfallProb"></span>
-        Specific humidity: <span data-bind="text: spcHum"></span>
-        Temperature: <span data-bind="text: temp"></span>
-        Wind speed: <span data-bind="text: windSpd"></span>
-        Wind direction: <span data-bind="text: windDir"></span>
+        <table>
+          <tr>
+            <td>Timestamp: <span data-bind="text: timestamp">2015-03-02T03:03:00Z</span></td>
+            <td>Location: <span data-bind="text: latitude">40.639751</span>,<span data-bind="text: longitude">-73.778925</span></td>
+          </tr>
+          <tr>
+            <td>Cloud cover: <span data-bind="text: cldCvr">100</span>%</td>
+            <td>Precipitation chance: <span data-bind="text: precipProb">100</span>%</td>
+          </tr>
+          <tr>
+            <td>Precipitation: <span data-bind="text: precip">0.03</span>"</td>
+            <td>Surface pressure: <span data-bind="text: sfcPres">1023</span> millibars</td>
+          </tr>
+          <tr>
+            <td>Snowfall: <span data-bind="text: snowfall">0.1</span>"</td>
+            <td>Snowfall chance: <span data-bind="text: snowfallProb">20</span>%</td>
+          </tr>
+          <tr>
+            <td>Specific humidity: <span data-bind="text: spcHum">3.2</span> g/kg</td>
+            <td>Temperature: <span data-bind="text: temp">30.7</span> F</td>
+          </tr>
+          <tr>
+            <td>Wind speed: <span data-bind="text: windSpd">3</span> mph</td>
+            <td>Wind direction: <span data-bind="text: windDir">149.2</span> degrees</td>
+          </tr>
+        </table>
       </div>
     </div>
   </div>
-  <div class="col-md-8" id="map-canvas"></div>
+  <div class="col-md-8" id="map-canvas" data-bind="googleMap: weatherReports"></div>
 </div>
 {% endblock %}
