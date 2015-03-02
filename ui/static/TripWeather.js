@@ -1,21 +1,63 @@
 var TripWeather = function() {
 
     var FlightPlan = function() {
-        this.depart_location = ko.observable();
-        this.arrive_location = ko.observable();
-        this.depart_time = ko.observable();
-        this.planned_speed = ko.observable();
-        this.report_interval = ko.observable();
+        var self = this;
 
-        this.weatherReports = ko.observableArray();
+        self.departLocation = ko.observable();
+        self.arriveLocation = ko.observable();
+        self.departTime = ko.observable();
+        self.plannedSpeed = ko.observable();
+        self.reportInterval = ko.observable();
 
-        this.buildFlightPlan = function() {
-            // Show busy indicator
-            // Post form to API
-            // Get URL for new flight plan's weather
-            // Request weather, store in weatherReports
-            this.weatherReports(weatherData);
-            // Hide busy indicator
+        self.weatherReports = ko.observableArray();
+
+        self.isLoading = ko.observable(false);
+
+        self.buildFlightPlan = function() {
+            self.isLoading(true);
+
+            self._createFlightPlan()
+                .then(self._getWeatherReport)
+                .done(function(data) {
+                    self.weatherReports(data);
+                })
+                .always(function() {
+                    self.isLoading(false);
+                });
+        };
+
+        self._createFlightPlan = function() {
+            var flightParams = {
+                depart_location: self.departLocation(),
+                arrive_location: self.arriveLocation(),
+                depart_time: self.departTime(),
+                planned_speed: self.plannedSpeed(),
+                report_interval: self.reportInterval()
+            };
+
+            // Return the promise created by ajax() so more actions can be chained
+            return $.ajax({
+                url: "/api/flight_plan",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(flightParams)
+            }).fail(function(jqxhr, status, error) {
+                console.error("Request to create flight plan failed:");
+                console.log(jqxhr, status, error);
+            });
+        };
+
+        self._getWeatherReport = function(data, status, jqxhr) {
+            var location = jqxhr.getResponseHeader('Location');
+
+            // Return the promise created by ajax() so more actions can be chained
+            return $.ajax({
+                url: location,
+                type: "GET"
+            }).fail(function(jqxhr, status, error) {
+                console.error("Request to get flight weather failed:");
+                console.log(jqxhr, status, error);
+            });
         };
     };
 
@@ -36,161 +78,6 @@ var TripWeather = function() {
         this.windDir = ko.observable();
     }
     */
-
-    var weatherData = [
-    {
-        "cldCvr": 1,
-        "temp": 23.8,
-        "flight_plan": 3,
-        "timestamp": "2015-02-28T01:30:09Z",
-        "sfcPres": 1033.7,
-        "longitude": -73.778925,
-        "windDir": 323.2,
-        "precip": 0,
-        "spcHum": 1.1,
-        "snowfall": 0,
-        "windSpd": 9.1,
-        "snowfallProb": null,
-        "latitude": 40.639751,
-        "id": 12,
-        "precipProb": 0
-    },
-    {
-        "cldCvr": 16,
-        "temp": -0.9,
-        "flight_plan": 3,
-        "timestamp": "2015-02-28T02:30:09Z",
-        "sfcPres": 1040.3,
-        "longitude": -79.4507028903156,
-        "windDir": 280.1,
-        "precip": 0,
-        "spcHum": 0.8,
-        "snowfall": 0,
-        "windSpd": 0,
-        "snowfallProb": null,
-        "latitude": 41.3752253488061,
-        "id": 13,
-        "precipProb": 0
-    },
-    {
-        "cldCvr": 30,
-        "temp": 5,
-        "flight_plan": 3,
-        "timestamp": "2015-02-28T03:30:09Z",
-        "sfcPres": 1040.8,
-        "longitude": -85.2267612152091,
-        "windDir": 240,
-        "precip": 0,
-        "spcHum": 0.8,
-        "snowfall": 0,
-        "windSpd": 3,
-        "snowfallProb": null,
-        "latitude": 41.8267133364137,
-        "id": 14,
-        "precipProb": 0
-    },
-    {
-        "cldCvr": 1,
-        "temp": -6.1,
-        "flight_plan": 3,
-        "timestamp": "2015-02-28T04:30:09Z",
-        "sfcPres": 1041.7,
-        "longitude": -91.0580620400133,
-        "windDir": 204.6,
-        "precip": 0,
-        "spcHum": 0.6,
-        "snowfall": 0,
-        "windSpd": 3,
-        "snowfallProb": null,
-        "latitude": 41.9856558083083,
-        "id": 15,
-        "precipProb": 0
-    },
-    {
-        "cldCvr": 17.4,
-        "temp": 7,
-        "flight_plan": 3,
-        "timestamp": "2015-02-28T05:30:09Z",
-        "sfcPres": 1036.9,
-        "longitude": -96.8913978529929,
-        "windDir": 150,
-        "precip": 0,
-        "spcHum": 0.9,
-        "snowfall": 0,
-        "windSpd": 7,
-        "snowfallProb": null,
-        "latitude": 41.8489656306218,
-        "id": 16,
-        "precipProb": 0
-    },
-    {
-        "cldCvr": 73.6,
-        "temp": 11.1,
-        "flight_plan": 3,
-        "timestamp": "2015-02-28T06:30:09Z",
-        "sfcPres": 1025.9,
-        "longitude": -102.673404662911,
-        "windDir": 170,
-        "precip": 0,
-        "spcHum": 1.3,
-        "snowfall": 0,
-        "windSpd": 15.8,
-        "snowfallProb": null,
-        "latitude": 41.4193000878005,
-        "id": 17,
-        "precipProb": 0
-    },
-    {
-        "cldCvr": 68,
-        "temp": 20.9,
-        "flight_plan": 3,
-        "timestamp": "2015-02-28T07:30:09Z",
-        "sfcPres": 1011.8,
-        "longitude": -108.354602779854,
-        "windDir": 100,
-        "precip": 0,
-        "spcHum": 2,
-        "snowfall": 0,
-        "windSpd": 3,
-        "snowfallProb": null,
-        "latitude": 40.7048260560287,
-        "id": 18,
-        "precipProb": 0
-    },
-    {
-        "cldCvr": 98.3,
-        "temp": 30,
-        "flight_plan": 3,
-        "timestamp": "2015-02-28T08:30:09Z",
-        "sfcPres": 1003.9,
-        "longitude": -113.892766300908,
-        "windDir": 141.7,
-        "precip": 0.01,
-        "spcHum": 2.6,
-        "snowfall": 0.12,
-        "windSpd": 3.9,
-        "snowfallProb": null,
-        "latitude": 39.718525821211,
-        "id": 19,
-        "precipProb": 48.44
-    },
-    {
-        "cldCvr": 80.9,
-        "temp": 50.6,
-        "flight_plan": 3,
-        "timestamp": "2015-02-28T10:06:06.537Z",
-        "sfcPres": 1007.5,
-        "longitude": -122.374889,
-        "windDir": 306.3,
-        "precip": 0,
-        "spcHum": 7.3,
-        "snowfall": 0,
-        "windSpd": 17.6,
-        "snowfallProb": null,
-        "latitude": 37.618972,
-        "id": 20,
-        "precipProb": 30
-    }];
 
     var drawMap = function() {
 

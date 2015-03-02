@@ -27,31 +27,32 @@
     <form data-bind="submit: buildFlightPlan">
       <fieldset>
         <p class="form-group">
-          <label for="depart_location">Depart from</label>
-          <input class="form-control" id="depart_location" type="text" required>
+          <label for="departLocation">Depart from</label>
+          <input class="form-control" id="departLocation" data-bind="value: departLocation" type="text" required>
           <span class="help-block">Three-letter airport code (i.e., "JFK") or latitude and longitude pair, separated by a comma.</span>
         </p>
         <p class="form-group">
-          <label for="arrive_location">Arrive at</label>
-          <input class="form-control" id="arrive_location" type="text" required>
+          <label for="arriveLocation">Arrive at</label>
+          <input class="form-control" id="arriveLocation" data-bind="value: arriveLocation" type="text" required>
           <span class="help-block">Three-letter airport code (i.e., "JFK") or latitude and longitude pair, separated by a comma.</span>
         </p>
         <p class="form-group">
-          <label for="depart_time">Depart time</label>
-          <input class="form-control" id="depart_time" type="text" required>
+          <label for="departTime">Depart time</label>
+          <input class="form-control" id="departTime" data-bind="value: departTime" type="text" required>
           <span class="help-block">Date and 24-hour time in YYYY-MM-DD HH:MM format</span>
         </p>
         <p class="form-group">
-          <label for="planned_speed">Planned speed</label>
-          <input class="form-control" id="planned_speed" type="number" min="1" required>
+          <label for="plannedSpeed">Planned speed</label>
+          <input class="form-control" id="plannedSpeed" data-bind="value: plannedSpeed" type="number" min="1" required>
           <span class="help-block">Average aircraft speed, in miles per hour</span>
         </p>
         <p class="form-group">
-          <label for="report_interval">Weather report interval</label>
-          <input class="form-control" id="report_interval" type="number" min="1" required>
+          <label for="reportInterval">Weather report interval</label>
+          <input class="form-control" id="reportInterval" data-bind="value: reportInterval" type="number" min="1" required>
           <span class="help-block">Number of hours between weather reports along flight path</span>
         </p>
-        <button type="submit" class="btn btn-primary">Plan Flight</button>
+        <button type="submit" class="btn btn-primary" data-bind="disable: isLoading">Plan Flight</button>
+        <img src="{{ STATIC_URL }}loading.gif" data-bind="visible: isLoading">
       </fieldset>
     </form>
     <div data-bind="foreach: weatherReports, visible: weatherReports().length > 0">
