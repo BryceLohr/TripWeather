@@ -43,30 +43,35 @@
     <form data-bind="submit: buildFlightPlan">
       <fieldset>
         <legend>Get weather for flight path</legend>
-        <p class="form-group">
+        <p class="form-group" data-bind="css: {'has-error': errors['depart_location']}">
           <label for="departLocation">Depart from</label>
           <input class="form-control" id="departLocation" data-bind="value: departLocation" type="text" required>
           <span class="help-block">Three-letter airport code (i.e., "JFK") or latitude and longitude pair, separated by a comma.</span>
+          <label for="departLocation" class="help-block bg-danger" data-bind="visible: hasError('depart_location'), html: getErrors('depart_location')"></label>
         </p>
-        <p class="form-group">
+        <p class="form-group" data-bind="css: {'has-error': errors['arrive_location']}">
           <label for="arriveLocation">Arrive at</label>
           <input class="form-control" id="arriveLocation" data-bind="value: arriveLocation" type="text" required>
           <span class="help-block">Three-letter airport code (i.e., "JFK") or latitude and longitude pair, separated by a comma.</span>
+          <label for="arriveLocation" class="help-block bg-danger" data-bind="visible: hasError('arrive_location'), html: getErrors('arrive_location')"></label>
         </p>
-        <p class="form-group">
+        <p class="form-group" data-bind="css: {'has-error': errors['depart_time']}">
           <label for="departTime">Depart time</label>
           <input class="form-control" id="departTime" data-bind="value: departTime" type="text" required>
           <span class="help-block">Date and 24-hour time in YYYY-MM-DD HH:MM format</span>
+          <label for="departTime" class="help-block bg-danger" data-bind="visible: hasError('depart_time'), html: getErrors('depart_time')"></label>
         </p>
-        <p class="form-group">
+        <p class="form-group" data-bind="css: {'has-error': errors['planned_speed']}">
           <label for="plannedSpeed">Planned speed</label>
           <input class="form-control" id="plannedSpeed" data-bind="value: plannedSpeed" type="number" min="1" required>
           <span class="help-block">Average aircraft speed, in miles per hour</span>
+          <label for="plannedSpeed" class="help-block bg-danger" data-bind="visible: hasError('planned_speed'), html: getErrors('planned_speed')"></label>
         </p>
-        <p class="form-group">
+        <p class="form-group" data-bind="css: {'has-error': errors['report_interval']}">
           <label for="reportInterval">Weather report interval</label>
           <input class="form-control" id="reportInterval" data-bind="value: reportInterval" type="number" min="1" required>
           <span class="help-block">Number of hours between weather reports along flight path</span>
+          <label for="reportInterval" class="help-block bg-danger" data-bind="visible: hasError('report_interval'), html: getErrors('report_interval')"></label>
         </p>
         <button type="submit" class="btn btn-primary" data-bind="disable: isLoading">Plan Flight</button>
         <img src="{{ STATIC_URL }}loading.gif" data-bind="visible: isLoading">

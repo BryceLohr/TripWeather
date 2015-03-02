@@ -6,6 +6,7 @@ import re
 from django import forms
 from django.conf import settings
 from django.db import transaction
+from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from pysal.cg import sphere
 import pytz
@@ -57,6 +58,24 @@ class FlightPlanForm(forms.ModelForm):
         self.instance.arrive_longitude = latlon[1]
         return latlon
 
+    def clean(self):
+        # The depart_time is assigned the UTC time zone because the default time
+        # zone is set to UTC in settings. We need to interpret the given time as
+        # the local time of the depart_location, not as UTC. Then we can get the
+        # UTC equivalent of the local depart time.
+        local_timezone = get_local_timezone(self.instance.depart_latitude, self.instance.depart_longitude, self.cleaned_data['depart_time'])
+        local_depart_time = self.cleaned_data['depart_time'].replace(tzinfo=local_timezone)
+        utc_depart_time = pytz.utc.normalize(local_depart_time.astimezone(pytz.utc))
+
+        # Limit depart_time to between the start of this hour and 7 days from now
+        this_hour = timezone.now().replace(minute=0, second=0, microsecond=0)
+        plus_7days = this_hour + timedelta(days=7)
+
+        if utc_depart_time < this_hour or utc_depart_time > plus_7days:
+            self.add_error('depart_time', forms.ValidationError("Depart time must be between the start of this hour and 7 days from now", code='invalid'))
+        else:
+            self.instance.depart_time = utc_depart_time
+
 
 def build_flight_plan(flight_plan_form):
     new_flight_plan = flight_plan_form.save(commit=False)
@@ -65,14 +84,7 @@ def build_flight_plan(flight_plan_form):
     depart = (new_flight_plan.depart_longitude, new_flight_plan.depart_latitude)
     arrive = (new_flight_plan.arrive_longitude, new_flight_plan.arrive_latitude)
     interval = new_flight_plan.report_interval
-
-    # The depart_time is assigned the UTC time zone because the default time
-    # zone is set to UTC in settings. We need to interpret the given time as
-    # the local time of the depart_location, not as UTC. Then we can get the
-    # UTC equivalent of the local depart time.
-    local_timezone = get_local_timezone(depart[1], depart[0], new_flight_plan.depart_time)
-    local_depart_time = new_flight_plan.depart_time.replace(tzinfo=local_timezone)
-    utc_depart_time = pytz.utc.normalize(local_depart_time.astimezone(pytz.utc))
+    utc_depart_time = new_flight_plan.depart_time
 
     miles = sphere.arcdist(depart, arrive, sphere.RADIUS_EARTH_MILES)
     hours = miles / float(new_flight_plan.planned_speed)

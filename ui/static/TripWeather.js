@@ -13,6 +13,7 @@ var TripWeather = function() {
         self.weatherReportCoordinates = [];
 
         self.isLoading = ko.observable(false);
+        self.errors = ko.observable({});
 
         self.buildFlightPlan = function() {
             self.isLoading(true);
@@ -24,6 +25,18 @@ var TripWeather = function() {
                     self.isLoading(false);
                 });
         };
+
+        self.hasError = function(fieldName) {
+            return !!self.errors()[fieldName];
+        };
+
+        self.getErrors = function(fieldName) {
+            var errs = self.errors();
+            if (errs[fieldName] && errs[fieldName].length > 0) {
+                var messages = $.map(errs[fieldName], function(item) { return item.message; });
+                return messages.join("<br>");
+            }
+        }
 
         self._createFlightPlan = function() {
             var flightParams = {
@@ -41,8 +54,12 @@ var TripWeather = function() {
                 contentType: "application/json",
                 data: JSON.stringify(flightParams)
             }).fail(function(jqxhr, status, error) {
-                console.error("Request to create flight plan failed:");
-                console.log(jqxhr, status, error);
+                if (jqxhr.status == 400) {
+                    var errorData = JSON.parse(jqxhr.responseText);
+                    self.errors(errorData);
+                } else {
+                    console.error("Request to create flight plan failed: %o\n%o", status, error);
+                }
             });
         };
 
@@ -54,8 +71,7 @@ var TripWeather = function() {
                 url: location,
                 type: "GET"
             }).fail(function(jqxhr, status, error) {
-                console.error("Request to get flight weather failed:");
-                console.log(jqxhr, status, error);
+                console.error("Request to get flight weather failed: %o\n%o", status, error);
             });
         };
 
